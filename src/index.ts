@@ -540,3 +540,4 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
   console.log(`Webhook set to: ${botUrl}/bot${token}`);
 });
+ export default app

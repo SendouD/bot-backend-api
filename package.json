@@ -1,0 +1,40 @@
+{
+  "name": "tt-backend",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": " tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch src --exec 'npm run build && node dist/src/index.js'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@privy-io/react-auth": "^1.98.4",
+    "@privy-io/server-auth": "^1.17.2",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/spl-token-metadata": "^0.1.6",
+    "@solana/web3.js": "^1.98.0",
+    "axios": "^1.7.9",
+    "bs58": "^4.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase": "^11.1.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "pinata-web3": "^0.5.4",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.4",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.6",
+    "@types/node-telegram-bot-api": "^0.64.7",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3"
+  }
+}

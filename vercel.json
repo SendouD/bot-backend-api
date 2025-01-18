@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+      {
+        "source": "/src/(.*)",
+        "destination": "/dist"
+      }
+    ]
+}

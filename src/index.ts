@@ -41,12 +41,15 @@ bot.setWebHook(`${botUrl}/bot${token}`); // Set webhook to the bot URL
 // Middleware to parse JSON body
 app.use(express.json());
 
-// Route to handle webhook updates
-app.post(`/bot${token}`, (req, res) => {
-  bot.processUpdate(req.body); // Pass the Telegram update to the bot instance
-  res.sendStatus(200);
+app.post(`/bot${token}`, async (req, res) => {
+  try {
+     bot.processUpdate(req.body);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Error processing update:', error);
+    res.sendStatus(500);
+  }
 });
-
 // Basic route to verify server status
 app.get('/', (req, res) => {
   res.send('Express server is running with Telegram Webhook!');
@@ -536,9 +539,8 @@ bot.on('callback_query', async (query) => {
 });
 });
 // Start the Express server
-// You can keep the initialization as it is
-console.log(`Webhook set to: ${botUrl}/bot${token}`);
-
-// Simply export the app for Vercel to handle it
-export default app;
-
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Webhook set to: ${botUrl}/bot${token}`);
+});
+ export default app

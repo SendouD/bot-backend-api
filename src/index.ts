@@ -73,7 +73,7 @@ bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
 
   if (msg.text === '/start') {
-    bot.sendMessage(chatId, 'Welcome to the bot! Use /balance to check your wallet balance.');
+    await bot.sendMessage(chatId, 'Welcome to the bot! Use /balance to check your wallet balance.');
     return;
   }
   else if (msg.text === '/address') {
@@ -83,23 +83,23 @@ bot.on('message', async (msg) => {
         const walletAddress = user?.wallet?.address;
 
         if (walletAddress) {
-          bot.sendMessage(chatId, `Your Wallet Address is: ${walletAddress}`);
+          await bot.sendMessage(chatId, `Your Wallet Address is: ${walletAddress}`);
         } else {
-          bot.sendMessage(chatId, 'Error: No wallet address found.');
+          await bot.sendMessage(chatId, 'Error: No wallet address found.');
         }
       } catch (error) {
         console.error("Error fetching user or storing in Firestore:", error);
-        bot.sendMessage(chatId, 'Error: Unable to fetch wallet address.');
+        await bot.sendMessage(chatId, 'Error: Unable to fetch wallet address.');
       }
     } else {
-      bot.sendMessage(chatId, 'Error: Unable to authenticate.');
+      await bot.sendMessage(chatId, 'Error: Unable to authenticate.');
     }
     return;
   }
   else if (msg.text === '/balance') {
     try {
       if (!msg.from?.username) {
-        bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+        await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
         return;
       }
 
@@ -108,11 +108,11 @@ bot.on('message', async (msg) => {
       // console.log('Retrieved user wallet:', user?.wallet);
 
       if (!user?.wallet?.address) {
-        bot.sendMessage(chatId, 'Error: No wallet address found for your account.');
+        await bot.sendMessage(chatId, 'Error: No wallet address found for your account.');
         return;
       }
       const balance = await getWalletBalance(user.wallet.address);
-      bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `💰 Wallet Balance (Solana Devnet)\n\n` +
         `Address: ${user.wallet.address}\n` +
@@ -122,7 +122,7 @@ bot.on('message', async (msg) => {
     } catch (error) {
       console.error('Error fetching balance:', error);
       const errorMessage = (error as Error).message;
-      bot.sendMessage(chatId, `Error: Unable to fetch balance. ${errorMessage}`);
+      await bot.sendMessage(chatId, `Error: Unable to fetch balance. ${errorMessage}`);
     }
     return;
   }
@@ -168,13 +168,13 @@ bot.on('message', async (msg) => {
             ]
           }
         };
-        bot.sendMessage(chatId, `Please connect your Phantom wallet:`, button);
+        await bot.sendMessage(chatId, `Please connect your Phantom wallet:`, button);
       } else {
-        bot.sendMessage(chatId, 'Error: Unable to authenticate.');
+        await  bot.sendMessage(chatId, 'Error: Unable to authenticate.');
       }
     } catch (error) {
       console.error("Error in connect command:", error);
-      bot.sendMessage(chatId, 'Error: Failed to initiate Phantom connection.');
+      await  bot.sendMessage(chatId, 'Error: Failed to initiate Phantom connection.');
     }
     return;
   }
@@ -183,14 +183,14 @@ bot.on('message', async (msg) => {
     try {
       if (msg.from?.username) {
         const transactionSignature = await sendAirdrop(msg.from.username);
-        bot.sendMessage(chatId, `Airdrop signature:${transactionSignature}`);
+        await  bot.sendMessage(chatId, `Airdrop signature:${transactionSignature}`);
       } else {
-        bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+        await   bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
       }
 
     } catch (error) {
       console.error('Error sending airdrop:', error);
-      bot.sendMessage(chatId, 'Error sending airdrop');
+      await bot.sendMessage(chatId, 'Error sending airdrop');
     }
     return;
   }
@@ -211,18 +211,18 @@ bot.on('message', async (msg) => {
           }
         }
         
-        bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
+        await bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
       } else {
-        bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+        await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
       }
     } catch (error) {
       console.error('Error sending transfer:', error);
-      bot.sendMessage(chatId, 'Error sending transfer');
+      await  bot.sendMessage(chatId, 'Error sending transfer');
     }
     return;
   }
  else if (msg.text === '/createtoken') {
-      bot.sendMessage(chatId, 'Please provide the following details to create your token in the following format:\n\n' +
+  await bot.sendMessage(chatId, 'Please provide the following details to create your token in the following format:\n\n' +
           'Name:<Token Name>\n' +
           'Symbol:<Token Symbol>\n' +
           'Description:<Token Description>\n\n' +
@@ -230,7 +230,7 @@ bot.on('message', async (msg) => {
       
           const detailsRegex = /Name:(.+)\nSymbol:(.+)\nDescription:(.+)/i;
       
-      bot.once('message', async (tokenMsg) => {
+           bot.once('message', async (tokenMsg) => {
           try {
               if (tokenMsg.caption && tokenMsg.photo) {
                   const match = tokenMsg.caption.match(detailsRegex);
@@ -275,16 +275,16 @@ bot.on('message', async (msg) => {
                       };
                       
                       // Send message with both buttons
-                      bot.sendMessage(chatId, `Create Token Link:`, button);
+                      await bot.sendMessage(chatId, `Create Token Link:`, button);
                       }
                       else{
-                        bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+                        await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
                       }
                   }
               }
           } catch (error) {
               console.error('Error creating token:', error);
-              bot.sendMessage(chatId, 'Error processing token creation request.');
+              await  bot.sendMessage(chatId, 'Error processing token creation request.');
           }
       });
       return;
@@ -298,10 +298,10 @@ bot.on('message', async (msg) => {
         // Fetch the user's tokens and show the token list
         await getUserTokens(msg);
       } else {
-        bot.sendMessage(msg.chat.id, 'Please reply to a valid user.');
+        await bot.sendMessage(msg.chat.id, 'Please reply to a valid user.');
       }
     } else {
-      bot.sendMessage(msg.chat.id, 'You must reply to a user to use this command.');
+      await bot.sendMessage(msg.chat.id, 'You must reply to a user to use this command.');
     }
     
   }
@@ -346,9 +346,9 @@ else if (msg.text && msg.text.startsWith('/sendsol')) {
                                   ]
                                 }
                               }
-                              bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
+                              await bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
                             } else {
-                              bot.sendMessage(chatId, 'Error: Wallet address is undefined.');
+                              await bot.sendMessage(chatId, 'Error: Wallet address is undefined.');
                             }
                           } else {
                             throw new Error('Wallet address is undefined');
@@ -356,18 +356,18 @@ else if (msg.text && msg.text.startsWith('/sendsol')) {
                         
                           
                         } else {
-                          bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+                          await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
                         }
                       } catch (error) {
                         console.error('Error sending transfer:', error);
-                        bot.sendMessage(chatId, 'Error sending transfer.');}
+                        await  bot.sendMessage(chatId, 'Error sending transfer.');}
                       
                     } else {
-                      bot.sendMessage(chatId, 'Error: Unable to retrieve user wallet address.');
+                      await bot.sendMessage(chatId, 'Error: Unable to retrieve user wallet address.');
                     }
                   } catch (error) {
                     console.error('Error creating pre-wallet:', error);
-                    bot.sendMessage(chatId, 'Error creating pre-wallet.');
+                    await  bot.sendMessage(chatId, 'Error creating pre-wallet.');
                   }
                 } 
                 else{
@@ -385,37 +385,37 @@ else if (msg.text && msg.text.startsWith('/sendsol')) {
                         ]
                       }
                     };
-                    bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
+                    await bot.sendMessage(chatId, `Transfer Transaction Link:`, button);
                   } else {
-                    bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+                    await  bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
                   }
                 }
                 // console.log(privyUser?.wallet?.address);
               }
               // Proceed with your transaction logic, sending amount to recipientUserId
-              bot.sendMessage(chatId, `Amount ${amount} will be sent to @${recipientUsername})`);
+              await bot.sendMessage(chatId, `Amount ${amount} will be sent to @${recipientUsername})`);
 
 
               // Here you can add further code to handle the transaction logic
           } else {
-              bot.sendMessage(chatId, 'Please reply to the user you want to send the amount to.');
+            await  bot.sendMessage(chatId, 'Please reply to the user you want to send the amount to.');
           }
       } else {
-          bot.sendMessage(chatId, 'Invalid command format. Use /cpw send <amount> in reply to the recipient\'s message.');
+        await  bot.sendMessage(chatId, 'Invalid command format. Use /cpw send <amount> in reply to the recipient\'s message.');
       }
   } catch (error) {
       console.error('Error sending amount:', error);
-      bot.sendMessage(chatId, 'Error processing your request.');
+      await bot.sendMessage(chatId, 'Error processing your request.');
   }
   return;
 }
 else if(msg.text === '/link') {
   if (msg.from?.username) {
-    bot.sendMessage(chatId, `${process.env.REDIRECT_URL}/login`|| "https://default-redirect-url.com");}
+    await bot.sendMessage(chatId, `${process.env.REDIRECT_URL}/login`|| "https://default-redirect-url.com");}
   
 }
 else if (msg.text === '/help') {
-  bot.sendMessage(chatId, 'Available commands:\n\n' +
+  await bot.sendMessage(chatId, 'Available commands:\n\n' +
     '/start - Welcomes the user\n' +
     '/address - Retrieves and displays your wallet address from Privy\n' +
     '/balance - Fetches your Solana wallet balance\n' +
@@ -453,10 +453,10 @@ bot.on('callback_query', async (query) => {
               if (msg.from?.username) {
                 if (privyUser.wallet?.address) {
                   if (privyUser.wallet) {
-                    bot.sendMessage(chatId, `No  Link: ${privyUser.wallet.address}, ${mintAddress}`);
+                    await bot.sendMessage(chatId, `No  Link: ${privyUser.wallet.address}, ${mintAddress}`);
 
                   } else {
-                    bot.sendMessage(chatId, 'Error: Wallet address is undefined.');
+                    await  bot.sendMessage(chatId, 'Error: Wallet address is undefined.');
                   }
                 } else {
                   throw new Error('Wallet address is undefined');
@@ -464,18 +464,18 @@ bot.on('callback_query', async (query) => {
               
                 
               } else {
-                bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+               await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
               }
             } catch (error) {
               console.error('Error sending transfer:', error);
-              bot.sendMessage(chatId, 'Error sending transfer.');}
+              await bot.sendMessage(chatId, 'Error sending transfer.');}
             
           } else {
-            bot.sendMessage(chatId, 'Error: Unable to retrieve user wallet address.');
+            await bot.sendMessage(chatId, 'Error: Unable to retrieve user wallet address.');
           }
         } catch (error) {
           console.error('Error creating pre-wallet:', error);
-          bot.sendMessage(chatId, 'Error creating pre-wallet.');
+          await bot.sendMessage(chatId, 'Error creating pre-wallet.');
         }
       } 
       else{
@@ -504,15 +504,15 @@ bot.on('callback_query', async (query) => {
                 }
             };
         
-            bot.sendMessage(chatId, `Airdrod To wallet: ${walletAddress}, Mint Address: ${mintAddr}`, opts);
+            await  bot.sendMessage(chatId, `Airdrod To wallet: ${walletAddress}, Mint Address: ${mintAddr}`, opts);
         }
         
         else{
-          bot.sendMessage(chatId,'wallet is not defined');
+          await  bot.sendMessage(chatId,'wallet is not defined');
         }      
       }
          else {
-          bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
+          await bot.sendMessage(chatId, 'Error: Unable to authenticate. Please set a Telegram username.');
         }
       }
     }

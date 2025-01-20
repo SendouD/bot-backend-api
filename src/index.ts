@@ -401,7 +401,7 @@ else if (msg.text && msg.text.startsWith('/sendsol')) {
             await  bot.sendMessage(chatId, 'Please reply to the user you want to send the amount to.');
           }
       } else {
-        await  bot.sendMessage(chatId, 'Invalid command format. Use /cpw send <amount> in reply to the recipient\'s message.');
+        await  bot.sendMessage(chatId, 'Invalid command format. Use /sendsol <amount> in reply to the recipient\'s message.');
       }
   } catch (error) {
       console.error('Error sending amount:', error);
@@ -536,8 +536,9 @@ bot.on('callback_query', async (query) => {
 });
 });
 // Start the Express server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  console.log(`Webhook set to: ${botUrl}/bot${token}`);
-});
- export default app
+// You can keep the initialization as it is
+console.log(`Webhook set to: ${botUrl}/bot${token}`);
+
+// Simply export the app for Vercel to handle it
+export default app;
+
